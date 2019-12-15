@@ -1,0 +1,63 @@
+// IE10+ compliant grid layout
+@mixin grid-template($type,$direction,$template,$gap){
+    $ms: "";
+    $other: "";
+
+    @if ($type == "repeat"){
+        @for $n from 0 to nth($template, 1) {
+            @if $n == 0 {
+                $ms: $ms + " " + nth($template, 2);
+            }
+            @else {
+                $ms: $ms + " " + $gap + " " + nth($template, 2);
+            }
+        }
+        $other : "repeat("+ nth($template, 1) + ", " + nth($template, 2) +")";
+    }
+    @else {
+        $n: 1;
+        @each $i in $template{
+            @if $n == 1 {
+                $ms: $ms + " " + $i;
+            }
+            @else {
+                $ms: $ms + " " + $gap + " " + $i;
+            }
+            $other : $other + " " + $i;
+            $n: $n + 1;
+        }
+    }
+
+    -ms-grid-#{$direction}s: #{$ms};
+    grid-template-#{$direction}s: #{$other};
+    grid-#{$direction}-gap: #{$gap};
+}
+
+@mixin grid(){
+    display: -ms-grid;
+    display: grid;
+}
+
+@mixin grid-column($begin,$span){
+    -ms-grid-column: ($begin * 2) - 1;
+    -ms-grid-column-span: ($span * 2) - 1;
+    grid-column: $begin / span $span;
+}
+
+@mixin grid-row($begin,$span){
+    -ms-grid-row: ($begin * 2) - 1;
+    -ms-grid-row-span: ($span * 2) - 1;
+    grid-row: $begin / span $span;
+}
+
+// EXAMPLES
+.container {
+    @include grid();
+    @include grid-template("describe","row",("60px", "1fr", "60px"),"");
+    @include grid-template("repeat","column",(12, "1fr"),"30px");
+}
+
+.main {
+    @include grid-column(1,7);
+    @include grid-row(1,3);
+}
